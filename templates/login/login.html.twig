@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello LoginController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="container d-flex">
+        <form action="{{ path('app_login') }}" method="post" class="mx-auto py-5 px-4 border form">
+            
+            {% if error %}
+                <div class="alert justify-content-center">{{ error.messageKey }}</div>
+            {% endif %}
+            <div class="ml-a justify-content-center">
+                <label for="inputUsername" class="form-label">Username:</label>
+                <input type="text" name="_username" id="username" class="form-control"/>
+            </div>
+            <div class="mb-3">
+                <label for="inputPassword" class="form-label">Password:</label>
+                <input type="password" name="_password" id="password" class="form-control"/>
+            </div class="mb-3 form-check">
+            <div class="form-check">
+                <label>
+                    <input type="checkbox" name="_remember_me" class="form-check-input"> Remember me
+                </label>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">login</button>
+            </div>
+            <input type="hidden" name="_target_path" value="/admin"/> 
+            <input type="hidden" name="_csrf_token"
+                value="{{ csrf_token('authenticate') }}"
+            >
+        </form>
+    </div>
+{% endblock %}
