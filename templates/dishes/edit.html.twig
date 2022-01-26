@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Dishes{% endblock %}
+
+{% block body %}
+<style>
+</style>
+
+<div class="container mt-5">
+    <div class="">
+        {{dish.name}}
+    </div>
+    {% for ing in ingredients %}
+        <div class="">
+            {{ing.name}} {{ing.ammount}} {{ing.unit}}
+        </div>
+    {% endfor %}
+    <div class="">
+        {{form(form)}}
+    </div>
+</div>
+{% endblock %}

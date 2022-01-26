@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
@@ -12,8 +13,11 @@ class LoginController extends AbstractController
     /**
      * @Route("/login", name="app_login")
      */
-    public function index(AuthenticationUtils $authenticationUtils): Response
+    public function index(AuthenticationUtils $authenticationUtils, Security $security): Response
     {
+        if ($security->isGranted('IS_AUTHENTICATED_FULLY')){
+            return $this->redirectToRoute('homepage');
+        };
 
         $error = $authenticationUtils->getLastAuthenticationError();
         $last_username = $authenticationUtils->getLastUsername();
@@ -29,5 +33,6 @@ class LoginController extends AbstractController
      */
     public function logout(): void
     {
+
     }
 }

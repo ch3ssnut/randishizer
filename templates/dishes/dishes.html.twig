@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DishesController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="container mt-5">
+    <div class="row">
+        {% for dish in dishes %}
+            <div class="dish col-2 border mx-2">
+                <div class="dish__name">
+                    {{dish.name}}
+                </div>
+                <div class="dish__type">
+                    {{dish.type}}
+                </div>
+                <div class="dish__edit">
+                    <a href="{{ path('edit_dishes', {'id':dish.id}) }}">Edit</a>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="dish col-2 border mx-2">
+            {{form(form)}}
+        </div>
+    </div>
+</div>
+{% endblock %}
