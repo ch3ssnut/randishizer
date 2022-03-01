@@ -33,6 +33,12 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
+                        <a class="nav-link {{ page == 'dishes' ? 'active' : '' }}" href="{{ path('dishes') }}">Dishes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ page == 'generate_spreadsheet' ? 'active' : '' }}" href="{{ path('generate_spreadsheet') }}">Generate</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
                     </li>
                 {% endif %}

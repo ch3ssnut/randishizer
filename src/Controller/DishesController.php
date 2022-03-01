@@ -7,6 +7,7 @@ use App\Entity\Ingredient;
 use App\Form\DishType;
 use App\Form\IngredientType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,5 +73,22 @@ class DishesController extends AbstractController
             'ingredients' => $ingredients,
             'form' => $dishForm->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/dishes/remove/{id}", name="remove_dishes")
+     */
+    public function remove(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $dish = $entityManager->getRepository(Dish::class)
+            ->findOneBy([
+                'owner' => $this->getUser(),
+                'id' => $id,
+            ]);
+
+        $entityManager->remove($dish);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('dishes');
     }
 }

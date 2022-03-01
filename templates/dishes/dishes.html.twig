@@ -10,6 +10,9 @@
 
 <div class="container mt-5">
     <div class="row">
+        <div class="dish col-2 border mx-2">
+            {{form(form)}}
+        </div>
         {% for dish in dishes %}
             <div class="dish col-2 border mx-2">
                 <div class="dish__name">
@@ -20,12 +23,14 @@
                 </div>
                 <div class="dish__edit">
                     <a href="{{ path('edit_dishes', {'id':dish.id}) }}">Edit</a>
+                    <a href="{{ path('remove_dishes', {'id':dish.id}) }}">Delete</a>
                 </div>
             </div>
         {% endfor %}
-        <div class="dish col-2 border mx-2">
-            {{form(form)}}
-        </div>
+
+    </div>
+    <div class="container mt-t">
+        <button class="btn btn-primary mt-5" href="{{ path('generate_spreadsheet') }}">Generate Excel</button>
     </div>
 </div>
 {% endblock %}
