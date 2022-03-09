@@ -6,6 +6,7 @@ use App\Entity\Dish;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MealRandomizer {
+    // This service is getting Dish repository and takes meal name passed as an arg. 
     
     private $entityManager;
 

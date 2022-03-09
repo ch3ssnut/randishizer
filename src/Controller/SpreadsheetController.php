@@ -29,6 +29,7 @@ class SpreadsheetController extends AbstractController
      */
     public function spreadsheet(Request $request): Response
     {
+        // This method is used to render /generate page
 
         $generateForm = $this->createForm(GenerateExcelType::class);
         $generateForm->handleRequest($request);
@@ -47,7 +48,8 @@ class SpreadsheetController extends AbstractController
 
     private function generate_spreadsheet(int $number_of_days): Response
     {
-
+        // This method generates spreadsheet with menu 
+        // TODO: generate also shopping list
         $spreadsheet = new Spreadsheet();
 
         // Setting types of meals
@@ -66,7 +68,7 @@ class SpreadsheetController extends AbstractController
             $mealIndex++;
         }
 
-        // Printing every day submitted by user into spreadsheet 
+        // Printing all days submitted by user into spreadsheet 
         $column = 'A';
 
         for ($i = 1; $i <= $number_of_days ; $i++ ) {
@@ -76,6 +78,25 @@ class SpreadsheetController extends AbstractController
         }
 
         
+        // Printing all meals into spreadsheet
+        // If number of days > number of meals -> method is making new array again and shuffling
+
+        for ($i = 1; $i <= count($mealsArr); $i++) {
+            $mealsColumn = 'A';
+            $arrNo = $i - 1;
+            $modMealArr = ${'mealArr' . $arrNo};
+            for ($n = 1; $n <= $number_of_days; $n++) {
+                $mealsColumn++;
+                $mealCell = $mealsColumn . $i + 1;
+                $sheet->setCellValue($mealCell, $modMealArr[0]);
+                array_shift($modMealArr);
+                if (!$modMealArr) {
+                    $modMealArr = ${'mealArr' . $arrNo};
+                    shuffle($modMealArr);
+                }
+                
+            }
+        }
 
         $writer = new Xlsx($spreadsheet);
         
