@@ -45,9 +45,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $dishes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UsersIngredient::class, mappedBy="Owner", orphanRemoval=true)
+     */
+    private $usersIngredients;
+
     public function __construct()
     {
         $this->dishes = new ArrayCollection();
+        $this->usersIngredients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -167,6 +173,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString()
     {
         return $this->username;
+    }
+
+    /**
+     * @return Collection|UsersIngredient[]
+     */
+    public function getUsersIngredients(): Collection
+    {
+        return $this->usersIngredients;
+    }
+
+    public function addUsersIngredient(UsersIngredient $usersIngredient): self
+    {
+        if (!$this->usersIngredients->contains($usersIngredient)) {
+            $this->usersIngredients[] = $usersIngredient;
+            $usersIngredient->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsersIngredient(UsersIngredient $usersIngredient): self
+    {
+        if ($this->usersIngredients->removeElement($usersIngredient)) {
+            // set the owning side to null (unless already changed)
+            if ($usersIngredient->getOwner() === $this) {
+                $usersIngredient->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 
 }

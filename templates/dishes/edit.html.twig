@@ -9,6 +9,9 @@
 <div class="container mt-5">
     <a href="{{path('dishes')}}">back</a>
     <div class="">
+        {{form(users_ingredient_form)}}
+    </div>
+    <div class="">
         {{dish.name}}
     </div>
     {% for ing in ingredients %}

@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Dish;
 use App\Entity\Ingredient;
+use App\Entity\UsersIngredient;
 use App\Form\DishType;
 use App\Form\IngredientType;
+use App\Form\UsersIngredientType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,6 +50,21 @@ class DishesController extends AbstractController
      */
     public function edit(int $id, EntityManagerInterface $entityManager, Request $request): Response
     {
+
+        $usersIngredient = new UsersIngredient();
+        $usersIngredient->setOwner($this->getUser());
+
+        // Form to create Ingredients and their specific units for specific user.
+        $usersIngredientForm = $this->createForm(UsersIngredientType::class, $usersIngredient);
+        $usersIngredientForm->handleRequest($request);
+        if ($usersIngredientForm->isSubmitted() && $usersIngredientForm->isValid()) {
+            $entityManager->persist($usersIngredientForm->getData());
+            $entityManager->flush();
+
+            return $this->redirectToRoute('edit_dishes', ['id' => $id]);
+        }
+
+        // Getting 
         $dish = $entityManager->getRepository(Dish::class)
             ->findOneBy([
                 'owner' => $this->getUser(),
@@ -58,10 +75,12 @@ class DishesController extends AbstractController
 
         $ingredient = new Ingredient();
         $ingredient->setDish($dish);
-
+        
+        // Form to add previously created ingredients to a specific dish.
         $dishForm = $this->createForm(IngredientType::class, $ingredient);
         $dishForm->handleRequest($request);
         if ($dishForm->isSubmitted() && $dishForm->isValid()) {
+            $ingredient->setUnit($dishForm->get('name')->getData()->getUnit());
             $entityManager->persist($dishForm->getData());
             $entityManager->flush();
 
@@ -72,6 +91,7 @@ class DishesController extends AbstractController
             'dish' => $dish,
             'ingredients' => $ingredients,
             'form' => $dishForm->createView(),
+            'users_ingredient_form' => $usersIngredientForm->createView(),
         ]);
     }
 
