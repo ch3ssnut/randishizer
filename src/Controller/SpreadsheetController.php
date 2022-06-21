@@ -18,10 +18,12 @@ class SpreadsheetController extends AbstractController
 {
 
     private $mealRandomizer;
+    private $entityManager;
 
-    public function __construct(MealRandomizer $mealRandomizer) 
+    public function __construct(MealRandomizer $mealRandomizer, EntityManagerInterface $entityManager) 
     {
         $this->mealRandomizer = $mealRandomizer;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -63,10 +65,12 @@ class SpreadsheetController extends AbstractController
         // Fetching shuffled meals array from MealRandomizer service
         $mealsArr = ['Breakfast', 'Dinner', 'Dessert', 'Supper'];
         $mealIndex = 0;
-        foreach ($mealsArr as $m) {
-            ${'mealArr' . $mealIndex} = $this->mealRandomizer->MealRandomizer($m);
-            $mealIndex++;
-        }
+        // foreach ($mealsArr as $m) {
+        //     ${'mealArr' . $mealIndex} = $this->mealRandomizer->MealRandomizer($m);
+        //     $mealIndex++;
+        // }
+        $query = $this->entityManager->getRepository(Dish::class)->findMealsByDish('Breakfast');
+        dd($query[0]);
 
         // Printing all days submitted by user into spreadsheet 
         $column = 'A';

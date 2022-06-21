@@ -21,6 +21,8 @@ class MealRandomizer {
             'type' => $mealName,
         ]);
         shuffle($mealArr);
+        
+
 
         return $mealArr;
     }

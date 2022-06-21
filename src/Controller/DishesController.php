@@ -65,12 +65,12 @@ class DishesController extends AbstractController
         }
 
         // Getting 
+        // TODO: fix n+1 problem
         $dish = $entityManager->getRepository(Dish::class)
             ->findOneBy([
                 'owner' => $this->getUser(),
                 'id' => $id
             ]);
-        
         $ingredients = $dish->getIngredients();
 
         $ingredient = new Ingredient();
