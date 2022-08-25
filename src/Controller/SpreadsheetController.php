@@ -83,10 +83,6 @@ class SpreadsheetController extends AbstractController
                 $ingRow = count($mealsArr) + 2;
                 $ingColumn = $mealsColumn;
                 foreach ($ing as $i) {
-                    $currentCell = $sheet->getCell($ingColumn . $ingRow)->getValue();
-                    
-                    
-                    
                     while (true) {
                         $currentCell = $sheet->getCell($ingColumn . $ingRow)->getValue();
                         if ($currentCell === null) {
