@@ -64,13 +64,57 @@ class SpreadsheetController extends AbstractController
 
         // Fetching shuffled meals array from MealRandomizer service
         $mealsArr = ['Breakfast', 'Dinner', 'Dessert', 'Supper'];
+
         $mealIndex = 0;
         // foreach ($mealsArr as $m) {
         //     ${'mealArr' . $mealIndex} = $this->mealRandomizer->MealRandomizer($m);
         //     $mealIndex++;
         // }
-        $query = $this->entityManager->getRepository(Dish::class)->findMealsByDish('Breakfast');
-        dd($query[0]);
+        $mealsRow = 2;
+        foreach ($mealsArr as $meal) {
+            $query = $this->entityManager->getRepository(Dish::class)->findMealsByDish($meal);
+            // TODO: shuffle after debugging
+            // shuffle($query);
+            $mealsColumn = 'B';
+
+            foreach ($query as $q) {
+                $sheet->setCellValue($mealsColumn . $mealsRow, $q->getName());
+                $ing = $q->getIngredients();
+                $ingRow = count($mealsArr) + 2;
+                $ingColumn = $mealsColumn;
+                foreach ($ing as $i) {
+                    $currentCell = $sheet->getCell($ingColumn . $ingRow)->getValue();
+                    
+                    
+                    
+                    while (true) {
+                        $currentCell = $sheet->getCell($ingColumn . $ingRow)->getValue();
+                        if ($currentCell === null) {
+                            $sheet->setCellValue($ingColumn++ . $ingRow, $i->getName());
+                            $sheet->setCellValue($ingColumn++ . $ingRow, $i->getAmmount());                   
+                            $sheet->setCellValue($ingColumn . $ingRow, $i->getUnit());
+                            break;
+                        } elseif ($currentCell === $i->getName()) {
+                            $sheet->setCellValue($ingColumn++ . $ingRow, $i->getName());
+                            $sheet->setCellValue($ingColumn . $ingRow, $sheet->getCell($ingColumn . $ingRow)->getValue() + $i->getAmmount());
+                            $ingColumn++;                   
+                            $sheet->setCellValue($ingColumn . $ingRow, $i->getUnit());
+                            break;
+                        } else {
+                            $ingRow++;
+                            continue;
+                        }
+                    }
+                    $ingColumn = $mealsColumn;
+                    $ingRow = count($mealsArr) + 2;
+                }
+                for ($i = 1; $i <= 3; $i++) {
+                    $mealsColumn ++;
+                }
+            }  
+            $mealsRow++;
+        }
+    
 
         // Printing all days submitted by user into spreadsheet 
         $column = 'A';
@@ -85,22 +129,22 @@ class SpreadsheetController extends AbstractController
         // Printing all meals into spreadsheet
         // If number of days > number of meals -> method is making new array again and shuffling
 
-        for ($i = 1; $i <= count($mealsArr); $i++) {
-            $mealsColumn = 'A';
-            $arrNo = $i - 1;
-            $modMealArr = ${'mealArr' . $arrNo};
-            for ($n = 1; $n <= $number_of_days; $n++) {
-                $mealsColumn++;
-                $mealCell = $mealsColumn . $i + 1;
-                $sheet->setCellValue($mealCell, $modMealArr[0]);
-                array_shift($modMealArr);
-                if (!$modMealArr) {
-                    $modMealArr = ${'mealArr' . $arrNo};
-                    shuffle($modMealArr);
-                }
+        // for ($i = 1; $i <= count($mealsArr); $i++) {
+        //     $mealsColumn = 'A';
+        //     $arrNo = $i - 1;
+        //     $modMealArr = ${'mealArr' . $arrNo};
+        //     for ($n = 1; $n <= $number_of_days; $n++) {
+        //         $mealsColumn++;
+        //         $mealCell = $mealsColumn . $i + 1;
+        //         $sheet->setCellValue($mealCell, $modMealArr[0]);
+        //         array_shift($modMealArr);
+        //         if (!$modMealArr) {
+        //             $modMealArr = ${'mealArr' . $arrNo};
+        //             shuffle($modMealArr);
+        //         }
                 
-            }
-        }
+        //     }
+        // }
 
         $writer = new Xlsx($spreadsheet);
         
