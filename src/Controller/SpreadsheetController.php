@@ -48,7 +48,7 @@ class SpreadsheetController extends AbstractController
 
     }
 
-    private function generate_spreadsheet(int $number_of_days): Response
+    private function generate_spreadsheet(int $numberOfDays): Response
     {
         // This method generates spreadsheet with menu 
         // TODO: generate also shopping list
@@ -71,38 +71,61 @@ class SpreadsheetController extends AbstractController
         //     $mealIndex++;
         // }
         $mealsRow = 2;
+        // TODO: make user be able to input for how many days they want to create shopping list
+        // TODO: $shoppingListDays hard coded for now
+        $shoppingListDays = 2;
+        $dayCounter = 1;
+        // TODO: change array of meals depending on number of days
+        
+        // Getting dishes for each meal and shuffling meals array, setting starting spreadsheet column as 'B'
         foreach ($mealsArr as $meal) {
             $query = $this->entityManager->getRepository(Dish::class)->findMealsByDish($meal);
-            // TODO: shuffle after debugging
-            // shuffle($query);
+            shuffle($query);
             $mealsColumn = 'B';
-
+            $shoppingListColumn = $mealsColumn;
+            // Looping all dishes to get each ingretien
             foreach ($query as $q) {
                 $sheet->setCellValue($mealsColumn . $mealsRow, $q->getName());
                 $ing = $q->getIngredients();
                 $ingRow = count($mealsArr) + 2;
-                $ingColumn = $mealsColumn;
+                $ingColumn = $shoppingListColumn;
                 foreach ($ing as $i) {
                     while (true) {
                         $currentCell = $sheet->getCell($ingColumn . $ingRow)->getValue();
                         if ($currentCell === null) {
+                            // If cell is empty filling it with ingredient|ammount|unit
                             $sheet->setCellValue($ingColumn++ . $ingRow, $i->getName());
                             $sheet->setCellValue($ingColumn++ . $ingRow, $i->getAmmount());                   
                             $sheet->setCellValue($ingColumn . $ingRow, $i->getUnit());
                             break;
                         } elseif ($currentCell === $i->getName()) {
+                            // If cell isn't empty checking if name filled inside cell is same as name of current ingredint
+                            // if name is same then summing ammount of ingredient
                             $sheet->setCellValue($ingColumn++ . $ingRow, $i->getName());
                             $sheet->setCellValue($ingColumn . $ingRow, $sheet->getCell($ingColumn . $ingRow)->getValue() + $i->getAmmount());
                             $ingColumn++;                   
                             $sheet->setCellValue($ingColumn . $ingRow, $i->getUnit());
                             break;
                         } else {
+                            // If name of ingredinet isn't same the loop increments row number so it can check next row
                             $ingRow++;
                             continue;
                         }
                     }
-                    $ingColumn = $mealsColumn;
+                    $ingColumn = $shoppingListColumn;
                     $ingRow = count($mealsArr) + 2;
+                }
+                /*
+                if $shoppingListDays > 1 column for ingredients stays the same, and $dayCounter is incremented
+                when $shoppingListDays is same as $dayCounter it increments 3 times $shoppingListDays so ingredients will be same column as meals column
+                */
+                if ($dayCounter === $shoppingListDays) {
+                    for ($i = 1; $i <= 3 * $shoppingListDays; $i++) {
+                        $shoppingListColumn ++;
+                    }
+                    $dayCounter = 1;
+                } else {
+                    $dayCounter++;
                 }
                 for ($i = 1; $i <= 3; $i++) {
                     $mealsColumn ++;
@@ -115,32 +138,12 @@ class SpreadsheetController extends AbstractController
         // Printing all days submitted by user into spreadsheet 
         $column = 'A';
 
-        for ($i = 1; $i <= $number_of_days ; $i++ ) {
+        for ($i = 1; $i <= $numberOfDays ; $i++ ) {
             $column++;
             $cell = $column . '1';
             $sheet->setCellValue($cell, 'Day number '.$i);
         }
 
-        
-        // Printing all meals into spreadsheet
-        // If number of days > number of meals -> method is making new array again and shuffling
-
-        // for ($i = 1; $i <= count($mealsArr); $i++) {
-        //     $mealsColumn = 'A';
-        //     $arrNo = $i - 1;
-        //     $modMealArr = ${'mealArr' . $arrNo};
-        //     for ($n = 1; $n <= $number_of_days; $n++) {
-        //         $mealsColumn++;
-        //         $mealCell = $mealsColumn . $i + 1;
-        //         $sheet->setCellValue($mealCell, $modMealArr[0]);
-        //         array_shift($modMealArr);
-        //         if (!$modMealArr) {
-        //             $modMealArr = ${'mealArr' . $arrNo};
-        //             shuffle($modMealArr);
-        //         }
-                
-        //     }
-        // }
 
         $writer = new Xlsx($spreadsheet);
         
