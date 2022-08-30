@@ -36,8 +36,9 @@ class SpreadsheetController extends AbstractController
         $generateForm = $this->createForm(GenerateExcelType::class);
         $generateForm->handleRequest($request);
         if ($generateForm->isSubmitted() && $generateForm->isValid()) {
-            $days_number = $generateForm->get('Number_of_days')->getData();
-            return $this->generate_spreadsheet($days_number);
+            $daysNumber = $generateForm->get('Number_of_days')->getData();
+            $daysNumberShopping = $generateForm->get('Number_of_shopping_days')->getData();
+            return $this->generate_spreadsheet($daysNumber, $daysNumberShopping);
         }
 
 
@@ -48,7 +49,7 @@ class SpreadsheetController extends AbstractController
 
     }
 
-    private function generate_spreadsheet(int $numberOfDays): Response
+    private function generate_spreadsheet(int $numberOfDays, int $shoppingListDays): Response
     {
         // This method generates spreadsheet with menu 
         // TODO: generate also shopping list
@@ -64,24 +65,23 @@ class SpreadsheetController extends AbstractController
 
         // Fetching shuffled meals array from MealRandomizer service
         $mealsArr = ['Breakfast', 'Dinner', 'Dessert', 'Supper'];
-
-        $mealIndex = 0;
-        // foreach ($mealsArr as $m) {
-        //     ${'mealArr' . $mealIndex} = $this->mealRandomizer->MealRandomizer($m);
-        //     $mealIndex++;
-        // }
         $mealsRow = 2;
-        // TODO: make user be able to input for how many days they want to create shopping list
-        // TODO: $shoppingListDays hard coded for now
-        $shoppingListDays = 2;
         $dayCounter = 1;
-        // TODO: change array of meals depending on number of days
-        
         // Getting dishes for each meal and shuffling meals array, setting starting spreadsheet column as 'B'
         foreach ($mealsArr as $meal) {
             $query = $this->entityManager->getRepository(Dish::class)->findMealsByDish($meal);
             shuffle($query);
             $mealsColumn = 'B';
+            while(true) {
+                if ($numberOfDays > count($query)) {
+                    $query = array_merge($query, $query);
+                } elseif ($numberOfDays < count($query)) {
+                    $query = array_splice($query, count($query) - $numberOfDays);
+                    break;
+                } else {
+                    break;
+                }
+            }
             $shoppingListColumn = $mealsColumn;
             // Looping all dishes to get each ingretien
             foreach ($query as $q) {
@@ -91,6 +91,7 @@ class SpreadsheetController extends AbstractController
                 $ingColumn = $shoppingListColumn;
                 foreach ($ing as $i) {
                     while (true) {
+                        // TODO: there's some bug while adding ingredients ammount for example while 5 number of days | number of shopping days 2
                         $currentCell = $sheet->getCell($ingColumn . $ingRow)->getValue();
                         if ($currentCell === null) {
                             // If cell is empty filling it with ingredient|ammount|unit

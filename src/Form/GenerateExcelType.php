@@ -13,7 +13,22 @@ class GenerateExcelType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Number_of_days', IntegerType::class)
+            ->add('Number_of_days', IntegerType::class,
+            [
+                'attr' => [
+                    'min'=>0,
+                    'max'=>30,
+                ]
+            ])
+            ->add('Number_of_shopping_days', IntegerType::class,
+            [
+                'required'=> false,
+                'data'=> 1,
+                'attr' => [
+                    'min'=>1,
+                    'max'=>30,
+                ]
+            ])
             ->add('Submit', SubmitType::class)
         ;
     }
