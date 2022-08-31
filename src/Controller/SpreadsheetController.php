@@ -52,7 +52,6 @@ class SpreadsheetController extends AbstractController
     private function generate_spreadsheet(int $numberOfDays, int $shoppingListDays): Response
     {
         // This method generates spreadsheet with menu 
-        // TODO: generate also shopping list
         $spreadsheet = new Spreadsheet();
 
         // Setting types of meals
@@ -66,12 +65,12 @@ class SpreadsheetController extends AbstractController
         // Fetching shuffled meals array from MealRandomizer service
         $mealsArr = ['Breakfast', 'Dinner', 'Dessert', 'Supper'];
         $mealsRow = 2;
-        $dayCounter = 1;
         // Getting dishes for each meal and shuffling meals array, setting starting spreadsheet column as 'B'
         foreach ($mealsArr as $meal) {
             $query = $this->entityManager->getRepository(Dish::class)->findMealsByDish($meal);
-            shuffle($query);
+            // shuffle($query);
             $mealsColumn = 'B';
+            $dayCounter = 1;
             while(true) {
                 if ($numberOfDays > count($query)) {
                     $query = array_merge($query, $query);
@@ -91,10 +90,12 @@ class SpreadsheetController extends AbstractController
                 $ingColumn = $shoppingListColumn;
                 foreach ($ing as $i) {
                     while (true) {
-                        // TODO: there's some bug while adding ingredients ammount for example while 5 number of days | number of shopping days 2
                         $currentCell = $sheet->getCell($ingColumn . $ingRow)->getValue();
                         if ($currentCell === null) {
                             // If cell is empty filling it with ingredient|ammount|unit
+                            // if ($i->getName() === '1b') {
+                            //     dd($dayCounter);
+                            // }
                             $sheet->setCellValue($ingColumn++ . $ingRow, $i->getName());
                             $sheet->setCellValue($ingColumn++ . $ingRow, $i->getAmmount());                   
                             $sheet->setCellValue($ingColumn . $ingRow, $i->getUnit());
@@ -132,17 +133,20 @@ class SpreadsheetController extends AbstractController
                     $mealsColumn ++;
                 }
             }  
+            // Inrementing $mealsRow so it will fill next row with meals
             $mealsRow++;
         }
     
 
         // Printing all days submitted by user into spreadsheet 
-        $column = 'A';
+        $column = 'B';
 
         for ($i = 1; $i <= $numberOfDays ; $i++ ) {
-            $column++;
             $cell = $column . '1';
             $sheet->setCellValue($cell, 'Day number '.$i);
+            for ($j = 1; $j <= 3; $j++) {
+                $column++;
+            }
         }
 
 
