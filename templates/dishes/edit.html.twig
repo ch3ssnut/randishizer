@@ -7,20 +7,63 @@
 </style>
 
 <div class="container mt-5">
-    <a href="{{path('dishes')}}">back</a>
-    <div class="">
-        {{form(users_ingredient_form)}}
-    </div>
-    <div class="">
-        {{dish.name}}
-    </div>
-    {% for ing in ingredients %}
-        <div class="">
-            {{ing.name}} {{ing.ammount}} {{ing.unit}}
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <div class="fs-3">
+                {{dish.name}}
+            </div>
+            <div class="">
+                <a href="{{path('dishes')}}" class="btn btn-primary">back</a>
+            </div>
         </div>
-    {% endfor %}
-    <div class="">
-        {{form(form)}}
+    </div>
+
+    <div class="row">
+        
+        
+        <div class="col-4">
+            {{form_start(users_ingredient_form, {'attr': {'class': 'mx-auto py-3 px-4 border form'}}) }}
+            <div class="">
+                {{ form_label(users_ingredient_form.Ingredient, 'Add new ingredient:', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(users_ingredient_form.Ingredient, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="">
+                {{ form_label(users_ingredient_form.unit, 'Unit:', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(users_ingredient_form.unit, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="d-flex mt-4">
+                {{ form_widget(users_ingredient_form.Submit, {'attr': {'class': 'btn btn-primary'}}) }}
+            </div>
+            {{form_end(users_ingredient_form)}}
+        </div>
+        <div class="col-4">
+            {{form_start(form, {'attr': {'class': 'mx-auto py-3 px-4 border form'}}) }}
+            <div class="">
+                {{ form_label(form.name, 'Name:', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-select'}}) }}
+            </div>
+            <div class="">
+                {{ form_label(form.ammount, 'Ammount:', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.ammount, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="d-flex mt-4">
+                {{ form_widget(form.Submit, {'attr': {'class': 'btn btn-primary'}}) }}
+            </div>
+            {{form_end(form)}}
+        </div>
+        <div class="col-4">
+            <ul class="list-group">
+                {% for ing in ingredients %}
+                    <div class="">
+                        <li class="list-group-item">
+                            {{ing.name}} {{ing.ammount}} {{ing.unit}}
+                        </li>
+                    </div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+        
     </div>
 </div>
 {% endblock %}

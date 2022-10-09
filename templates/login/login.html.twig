@@ -8,8 +8,8 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="container d-flex">
-        <form action="{{ path('app_login') }}" method="post" class="mx-auto py-5 px-4 border form">
+<div class="container d-flex my-5">
+        <form action="{{ path('app_login') }}" method="post" class="mx-auto py-5 px-4 border form mt-5">
             
             {% if error %}
                 <div class="alert justify-content-center">{{ error.messageKey }}</div>
@@ -30,7 +30,7 @@
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">login</button>
             </div>
-            <input type="hidden" name="_target_path" value="/admin"/> 
+            <input type="hidden" name="_target_path" value="/"/> 
             <input type="hidden" name="_csrf_token"
                 value="{{ csrf_token('authenticate') }}"
             >
