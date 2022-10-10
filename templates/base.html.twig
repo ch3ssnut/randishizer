@@ -33,7 +33,7 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link {{ page == 'dishes' ? 'active' : '' }}" href="{{ path('dishes') }}">Dishes</a>
+                        <a class="nav-link {{ page == 'dishes' ? 'active' : '' }} {{ page == 'edit_dishes' ? 'active' : '' }}" href="{{ path('dishes') }}">Dishes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ page == 'generate_spreadsheet' ? 'active' : '' }}" href="{{ path('generate_spreadsheet') }}">Generate</a>

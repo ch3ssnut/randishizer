@@ -25,8 +25,15 @@
             </div>
         {% endfor %}
     </div>
-    <div class="dish col-2 border mx-2">
-            {{form(form)}}
+    <div class="row">
+        {{form_start(form, {'attr': {'class': 'col-3 mx-2 mt-4 py-3 px-4 border form'}}) }}
+        
+            {{ form_label(form.name, 'Add new dish:', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+            {{ form_label(form.type, 'Select type:', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
+            {{ form_widget(form.Submit, {'attr': {'class': 'mt-3 btn btn-primary'}}) }}
+        {{form_end(form)}}
     </div>
 </div>
 {% endblock %}

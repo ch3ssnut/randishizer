@@ -76,16 +76,26 @@ class DishesController extends AbstractController
         $ingredient = new Ingredient();
         $ingredient->setDish($dish);
         
-        // Form to add previously created ingredients to a specific dish.
+        // Form to add or remove previously created ingredients to a specific dish.
         $dishForm = $this->createForm(IngredientType::class, $ingredient);
         $dishForm->handleRequest($request);
         if ($dishForm->isSubmitted() && $dishForm->isValid()) {
-            $ingredient->setUnit($dishForm->get('name')->getData()->getUnit());
-            $entityManager->persist($dishForm->getData());
-            $entityManager->flush();
+            if ($dishForm->get('Submit')->isClicked()) {
+                $ingredient->setUnit($dishForm->get('name')->getData()->getUnit());
+                $entityManager->persist($dishForm->getData());
+                $entityManager->flush();
+            }
+            if ($dishForm->get('Remove')->isClicked()) {
+                if ($dishForm->get('name')->getData()->getOwner() === $this->getUser()) {
+                    $entityManager->remove($dishForm->get('name')->getData());
+                    $entityManager->flush();
+                }
+            }
 
             return $this->redirectToRoute('edit_dishes', ['id' => $id]);
         }
+
+        // dd($dishForm->get('name')->getData());
 
         return $this->render('dishes/edit.html.twig', [
             'dish' => $dish,
@@ -111,4 +121,24 @@ class DishesController extends AbstractController
 
         return $this->redirectToRoute('dishes');
     }
+
+    
+    /**
+     * @Route("dishes/{id}/remove_ingredinet/{ing_id}", name="remove_ingredinet")
+     */
+    public function remove_ingredinet(int $id, int $ing_id, EntityManagerInterface $entityManager): Response
+    {
+
+        $ingredient = $entityManager->getRepository(Ingredient::class)->findIngredientsByDish($id, $ing_id);
+        $entityManager->remove($ingredient[0]);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('edit_dishes', ['id' => $id]);
+    }
+
+    // public function remove_users_ingredient(): Response
+    // {
+        
+    //     return self;
+    // }
 }

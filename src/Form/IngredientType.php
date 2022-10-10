@@ -49,6 +49,7 @@ class IngredientType extends AbstractType
                 'required' => false,
             ])
             ->add('Submit', SubmitType::class)
+            ->add('Remove', SubmitType::class)
         ;
     }
 
