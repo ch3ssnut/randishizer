@@ -8,8 +8,14 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="example-wrapper">
-    {{ form(form) }}
+<div class="container">
+        {{form_start(form, {'attr': {'class': 'col-4 mx-auto mt-5 py-3 px-4 border form'}}) }}
+            {{ form_label(form.Number_of_days, 'Number of Days:', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.Number_of_days, {'attr': {'class': 'form-control'}}) }}
+            {{ form_label(form.Number_of_shopping_days, 'Shopping list days summed up:', {'label_attr': {'class': 'form-label mt-3'}}) }}
+            {{ form_widget(form.Number_of_shopping_days, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.Submit, {'attr': {'class': 'mt-3 btn btn-primary'}}) }}
+        {{form_end(form)}}
 
 </div>
 {% endblock %}
