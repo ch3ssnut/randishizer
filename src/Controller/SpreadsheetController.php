@@ -68,11 +68,11 @@ class SpreadsheetController extends AbstractController
         // Getting dishes for each meal and shuffling meals array, setting starting spreadsheet column as 'B'
         foreach ($mealsArr as $meal) {
             $query = $this->entityManager->getRepository(Dish::class)->findMealsByDish($meal);
-            // shuffle($query);
+            shuffle($query);
             $mealsColumn = 'B';
             $dayCounter = 1;
             while(true) {
-                if ($numberOfDays > count($query)) {
+                if ($numberOfDays > count($query) && !empty($query)) {
                     $query = array_merge($query, $query);
                 } elseif ($numberOfDays < count($query)) {
                     $query = array_splice($query, count($query) - $numberOfDays);
